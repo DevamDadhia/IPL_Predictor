@@ -11,15 +11,17 @@ st.set_page_config(
 )
 
 # =====================
-# CUSTOM CSS
+# FIXED CSS (THEME SAFE)
 # =====================
 st.markdown("""
 <style>
+
+/* Background gradient */
 .stApp {
     background: linear-gradient(135deg, #667eea, #764ba2);
 }
 
-/* Main container */
+/* Main container (white card) */
 .block-container {
     background: white;
     padding: 2rem;
@@ -27,16 +29,16 @@ st.markdown("""
     box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
 }
 
-/* Title */
+/* Title - DARK (visible on white card) */
 h1 {
     text-align: center;
-    color: #ffffff;
+    color: #2c3e50;
 }
 
-/* Subtitle */
+/* Subtitle - DARK */
 .subtitle {
     text-align: center;
-    color: #eeeeee;
+    color: #555;
     margin-bottom: 20px;
 }
 
@@ -57,14 +59,20 @@ label {
     width: 100%;
 }
 
-/* Result cards */
+/* Result box */
 .result-box {
-    background: #f8f9fa;
+    background: #f4f6f7;
     padding: 20px;
     border-radius: 12px;
     margin-top: 20px;
     text-align: center;
 }
+
+/* Result text */
+.result-box h2 {
+    margin: 0;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -122,7 +130,6 @@ with col3:
 with col4:
     toss_decision = st.selectbox("Toss Decision", ["bat", "field"])
 
-# ✅ FIXED VENUE INPUT
 venue = st.selectbox("Select Venue", venues)
 
 st.markdown(" ")
@@ -143,24 +150,22 @@ if st.button("Predict Match 🚀"):
             venue
         )
 
-        # ✅ FIXED PLAYER LOGIC CALL
         player = get_best_player(team1, team2)
 
-        # =====================
-        # RESULTS
-        # =====================
         st.markdown("### 🏆 Prediction Results")
 
+        # Winner
         st.markdown(
             f"""
             <div class="result-box">
                 <h3>🏆 Winner</h3>
-                <h2 style="color:#2ecc71;">{winner}</h2>
+                <h2 style="color:#27ae60;">{winner}</h2>
             </div>
             """,
             unsafe_allow_html=True
         )
 
+        # Player
         st.markdown(
             f"""
             <div class="result-box">
