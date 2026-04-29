@@ -7,6 +7,10 @@ import joblib
 rf = joblib.load("winner_model.pkl")
 columns = joblib.load("columns.pkl")
 
+# =====================
+# LOAD DATA
+# =====================
+deliveries = pd.read_csv("data/deliveries.csv")
 
 # =====================
 # WINNER PREDICTION
@@ -26,6 +30,7 @@ def predict_match(team1, team2, toss_winner, toss_decision, venue):
 
     input_encoded = pd.get_dummies(input_df)
 
+    # Align with training columns
     input_encoded = input_encoded.reindex(columns=columns, fill_value=0)
 
     pred = rf.predict(input_encoded)[0]
@@ -34,9 +39,8 @@ def predict_match(team1, team2, toss_winner, toss_decision, venue):
 
 
 # =====================
-# PLAYER OF MATCH LOGIC
+# PLAYER PERFORMANCE MODEL
 # =====================
-deliveries = pd.read_csv("data/deliveries.csv")
 
 # Batting stats
 batting_stats = deliveries.groupby(["match_id", "batsman"]).agg({
@@ -63,7 +67,7 @@ bowling_stats.rename(columns={
     "player_dismissed": "wickets"
 }, inplace=True)
 
-# Merge both
+# Merge batting + bowling
 player_stats = pd.merge(
     batting_stats,
     bowling_stats,
@@ -87,13 +91,25 @@ best_players = player_stats.loc[
 
 
 # =====================
-# GET BEST PLAYER
+# FIXED PLAYER FUNCTION
 # =====================
-def get_best_player(match_id=1):
+def get_best_player(team1, team2):
 
-    player = best_players[best_players["match_id"] == match_id]
+    # Get all matches where either team played
+    match_ids = deliveries[
+        (deliveries["batting_team"] == team1) |
+        (deliveries["batting_team"] == team2)
+    ]["match_id"].unique()
 
-    if len(player) == 0:
+    # Filter best players for those matches
+    filtered_players = best_players[
+        best_players["match_id"].isin(match_ids)
+    ]
+
+    if len(filtered_players) == 0:
         return "Unknown"
 
-    return player.iloc[0]["player"]
+    # Return top performer
+    return filtered_players.sort_values(
+        "performance_score", ascending=False
+    ).iloc[0]["player"]
