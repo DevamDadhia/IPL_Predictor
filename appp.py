@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # =====================
-# CUSTOM CSS (CLEAN + COLORFUL)
+# CUSTOM CSS
 # =====================
 st.markdown("""
 <style>
@@ -40,7 +40,7 @@ h1 {
     margin-bottom: 20px;
 }
 
-/* Inputs */
+/* Labels */
 label {
     font-weight: 600 !important;
     color: #2c3e50 !important;
@@ -92,6 +92,20 @@ teams = [
     "Rajasthan Royals"
 ]
 
+venues = [
+    "Wankhede Stadium",
+    "M Chinnaswamy Stadium",
+    "Eden Gardens",
+    "Feroz Shah Kotla",
+    "Rajiv Gandhi International Stadium",
+    "MA Chidambaram Stadium",
+    "Punjab Cricket Association Stadium",
+    "Sawai Mansingh Stadium",
+    "Narendra Modi Stadium",
+    "Brabourne Stadium",
+    "DY Patil Stadium"
+]
+
 col1, col2 = st.columns(2)
 
 with col1:
@@ -108,9 +122,8 @@ with col3:
 with col4:
     toss_decision = st.selectbox("Toss Decision", ["bat", "field"])
 
-venue = st.text_input("Venue", "Wankhede Stadium")
-
-match_id = st.number_input("Match ID (for Player of Match)", min_value=1, value=1)
+# ✅ FIXED VENUE INPUT
+venue = st.selectbox("Select Venue", venues)
 
 st.markdown(" ")
 
@@ -130,7 +143,8 @@ if st.button("Predict Match 🚀"):
             venue
         )
 
-        player = get_best_player(match_id)
+        # ✅ FIXED PLAYER LOGIC CALL
+        player = get_best_player(team1, team2)
 
         # =====================
         # RESULTS
